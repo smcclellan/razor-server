@@ -35,6 +35,7 @@
   e.g. "task": "TASK_NAME" instead of "task": { "name" => "TASK_NAME" }
 + The matching language for rules now allows both "upper" and "lower" for use
   as functions to convert string values to upper- and lower-case respectively.
++ The `create-policy` function no longer creates tags in addition to creating a policy.
 
 ## 0.13.0 - 2014-01-21
 

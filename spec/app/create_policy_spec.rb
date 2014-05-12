@@ -24,13 +24,13 @@ describe "create policy command" do
     let(:command_hash) do
       # FIXME: Once we have proper helpers to generate these URL's,
       # use them in these tests
-      { :name          => "test policy",
-        :repo          => { "name" => repo.name },
-        :task          => {"name" => "some_os"},
-        :broker        => { "name" => broker.name },
-        :hostname      => "host${id}.example.com",
+      { 'name'          => "test policy",
+        'repo'          => repo.name,
+        'task'          => 'some_os',
+        'broker'        => broker.name,
+        'hostname'      => "host${id}.example.com",
         'root-password' => "geheim",
-        :tags          => [ { "name" => tag1.name } ]
+        'tags'          => [ { "name" => tag1.name } ]
       }
     end
 
@@ -54,32 +54,32 @@ describe "create policy command" do
     end
 
     it "should fail if 'tags' is wrong datatype" do
-      command_hash[:tags] = ''
+      command_hash['tags'] = ''
       create_policy
       last_response.status.should == 422
     end
 
     it "should fail if a nonexisting tag is referenced" do
-      command_hash[:tags] = [ { "name" => "not_a_tag"} ]
+      command_hash['tags'] = [ { "name" => "not_a_tag"} ]
       create_policy
-      last_response.json['error'].should =~ /A rule must be provided for new tag 'not_a_tag'/
+      last_response.json['error'].should == "A rule must be provided for new tag 'not_a_tag'"
       last_response.status.should == 400
     end
 
     it "should fail if a nonexisting repo is referenced" do
-      command_hash[:repo] = { "name" => "not_an_repo" }
+      command_hash['repo'] = "not_an_repo"
       create_policy
       last_response.status.should == 404
     end
 
     it "should fail if the name is empty" do
-      command_hash[:name] = ""
+      command_hash['name'] = ""
       create_policy
       last_response.status.should == 422
     end
 
     it "should fail if the name is missing" do
-      command_hash.delete(:name)
+      command_hash.delete('name')
       create_policy
       last_response.status.should == 422
     end
@@ -91,14 +91,14 @@ describe "create policy command" do
     end
 
     it "should fail without repo" do
-      command_hash.delete(:repo)
+      command_hash.delete('repo')
       create_policy
       last_response.status.should == 422
       last_response.json['error'].should == "repo is a required attribute, but it is not present"
     end
 
     it "should fail without broker" do
-      command_hash.delete(:broker)
+      command_hash.delete('broker')
       create_policy
       last_response.status.should == 422
       last_response.json['error'].should == "broker is a required attribute, but it is not present"
@@ -113,21 +113,21 @@ describe "create policy command" do
     it "should create a policy in the database" do
       create_policy
 
-      Razor::Data::Policy[:name => command_hash[:name]].should be_an_instance_of Razor::Data::Policy
+      Razor::Data::Policy[:name => command_hash['name']].should be_an_instance_of Razor::Data::Policy
     end
 
     it "should default to enabling the policy" do
       create_policy
 
-      Razor::Data::Policy[:name => command_hash[:name]].enabled.should be_true
+      Razor::Data::Policy[:name => command_hash['name']].enabled.should be_true
     end
 
     it "should allow creating a disabled policy" do
-      command_hash[:enabled] = false
+      command_hash['enabled'] = false
 
       create_policy
 
-      Razor::Data::Policy[:name => command_hash[:name]].enabled.should be_false
+      Razor::Data::Policy[:name => command_hash['name']].enabled.should be_false
     end
 
     it "should allow creating a policy with max count" do
@@ -135,19 +135,19 @@ describe "create policy command" do
 
       create_policy
 
-      Razor::Data::Policy[:name => command_hash[:name]].max_count.should == 10
+      Razor::Data::Policy[:name => command_hash['name']].max_count.should == 10
     end
 
     it "should fail with the wrong datatype for repo" do
-      command_hash[:repo] = { }
+      command_hash['repo'] = { }
       create_policy
-      last_response.json['error'].should =~ /repo\.name is a required attribute, but it is not present/
+      last_response.json['error'].should == 'repo should be a string, but was actually a object'
     end
 
     it "should fail with the wrong datatype for max-count" do
       command_hash['max-count'] = { }
       create_policy
-      last_response.json['error'].should =~ /max-count should be a number, but was actually a object/
+      last_response.json['error'].should == 'max-count should be a number, but was actually a object'
     end
 
 
@@ -162,7 +162,7 @@ describe "create policy command" do
       command_hash['tag'] = [tag2.name]
       create_policy
       last_response.status.should == 202
-      ([tag1, tag2] & Razor::Data::Policy[:name => command_hash[:name]].tags).should == [tag1, tag2]
+      ([tag1, tag2] & Razor::Data::Policy[:name => command_hash['name']].tags).should == [tag1, tag2]
     end
 
     it "should conform tag string into tags" do
@@ -170,7 +170,7 @@ describe "create policy command" do
       command_hash['tag'] = tag2.name
       create_policy
       last_response.status.should == 202
-      ([tag1, tag2] & Razor::Data::Policy[:name => command_hash[:name]].tags).should == [tag1, tag2]
+      ([tag1, tag2] & Razor::Data::Policy[:name => command_hash['name']].tags).should == [tag1, tag2]
     end
 
     it "should fail with the wrong datatype for tag" do
@@ -181,48 +181,48 @@ describe "create policy command" do
     end
 
     it "should fail with the wrong datatype for task" do
-      command_hash[:task] = { }
+      command_hash['task'] = { }
       create_policy
-      last_response.json['error'].should =~ /task\.name is a required attribute, but it is not present/
+      last_response.json['error'].should == 'task should be a string, but was actually a object'
     end
 
     it "should fail with the wrong datatype for broker" do
-      command_hash[:broker] = { }
+      command_hash['broker'] = { }
       create_policy
-      last_response.json['error'].should =~ /broker\.name is a required attribute, but it is not present/
+      last_response.json['error'].should == 'broker should be a string, but was actually a object'
     end
 
     it "should fail with the wrong datatype for tags" do
-      command_hash[:tags] = { }
+      command_hash['tags'] = { }
       create_policy
-      last_response.json['error'].should =~ /tags should be a array, but was actually a object/
-      command_hash[:tags] = [ { } ]
+      last_response.json['error'].should == 'tags should be a array, but was actually a object'
+      command_hash['tags'] = [ { } ]
       create_policy
-      last_response.json['error'].should =~ /tags\[0\].name is a required attribute, but it is not present/
+      last_response.json['error'].should == 'tags[0].name is a required attribute, but it is not present'
     end
 
     it "should conform the shortcut syntax" do
-      command_hash[:repo] = repo.name
-      command_hash[:task] = 'some_os'
-      command_hash[:broker] = broker.name
-      command_hash[:tags] = [ tag1.name ]
+      command_hash['repo'] = repo.name
+      command_hash['task'] = 'some_os'
+      command_hash['broker'] = broker.name
+      command_hash['tags'] = [ tag1.name ]
 
       create_policy
 
       last_response.json['error'].should be_nil
-      Razor::Data::Policy[:name => command_hash[:name]].should be_an_instance_of Razor::Data::Policy
+      Razor::Data::Policy[:name => command_hash['name']].should be_an_instance_of Razor::Data::Policy
     end
 
     it "should allow mixed forms" do
-      command_hash[:repo] = { 'name' => repo.name }
-      command_hash[:task] = 'some_os'
-      command_hash[:broker] = { 'name' => broker.name }
-      command_hash[:tags] = [ tag1.name, {'name' => tag1.name} ]
+      command_hash['repo'] = { 'name' => repo.name }
+      command_hash['task'] = 'some_os'
+      command_hash['broker'] = { 'name' => broker.name }
+      command_hash['tags'] = [ tag1.name, {'name' => tag1.name} ]
 
       create_policy
 
       last_response.json['error'].should be_nil
-      Razor::Data::Policy[:name => command_hash[:name]].should be_an_instance_of Razor::Data::Policy
+      Razor::Data::Policy[:name => command_hash['name']].should be_an_instance_of Razor::Data::Policy
     end
 
     context "ordering" do
@@ -235,7 +235,7 @@ describe "create policy command" do
         command_hash[where.to_s] = { "name" => policy.name } unless where.nil?
         create_policy
         last_response.status.should == 202
-        p = Razor::Data::Policy[:name => command_hash[:name]]
+        p = Razor::Data::Policy[:name => command_hash['name']]
 
         list = list.map { |x| x == :_ ? p.id : x.id }
         Policy.all.map { |p| p.id }.should == list
@@ -268,7 +268,7 @@ describe "create policy command" do
 
     context "creating references" do
       it "creates tags that have rules" do
-        command_hash[:tags] = [
+        command_hash['tags'] = [
             {'name' => 'small', 'rule' => ['<=', ['num', %w(fact processorcount)], 2]}
         ]
 
@@ -277,13 +277,13 @@ describe "create policy command" do
         Razor::Data::Tag.find(name: 'small').should_not be_nil
       end
       it "fails when rule does not match existing rule" do
-        command_hash[:tags] = [
+        command_hash['tags'] = [
             {'name' => tag1.name, 'rule' => ['<=', ['num', %w(fact processorcount)], 2]}
         ]
 
         create_policy
 
-        last_response.json['error'].should =~ /Provided rule and existing rule for existing tag '#{tag1.name}' must be equal/
+        last_response.json['error'].should == "Provided rule and existing rule for existing tag '#{tag1.name}' must be equal"
       end
     end
   end
