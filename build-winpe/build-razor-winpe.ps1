@@ -4,10 +4,32 @@
 #
 # For release we should sign the script, I guess?
 
+$programFiles = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFiles)
+
 function test-administrator {
-    $identity  = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = New-Object Security.Principal.WindowsPrincipal($Identity)
-    $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    <#
+    .SYNOPSIS
+    Tests whether the current process is running with administrative rights.
+
+    .DESCRIPTION
+    This function checks whether the current process has administrative rights
+    by checking if the current user identity is a member of the Administrators group.
+    It returns $true if the current process is running with administrative rights,
+    $false otherwise.
+
+    On Windows Vista and later, with UAC enabled, the returned value represents the
+    actual rights available to the process, i.e. if it returns $true, the process is
+    running elevated.
+
+    .OUTPUTS
+    System.Boolean
+
+    #>
+
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent([Security.Principal.TokenAccessLevels]'Query,Duplicate'))
+    $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    Write-Debug "Test-ProcessAdminRights: returning $isAdmin"
+    return $isAdmin
 }
 
 function get-currentdirectory {
@@ -15,11 +37,29 @@ function get-currentdirectory {
     [IO.Path]::GetDirectoryName((Get-Content function:$thisName).File)
 }
 
+function test-adk-installed {
+    Write-Host "Testing whether ADK is installed..."
+    return Test-Path "$programFiles/Windows Kits"
+}
+
+function install-adk {
+    Write-Host "Installing ADK"
+    $storageDir = $pwd
+    $webclient = New-Object System.Net.WebClient
+    $url = "http://download.microsoft.com/download/6/A/E/6AEA92B0-A412-4622-983E-5B305D2EBE56/adk/adksetup.exe"
+    $file = "$storageDir\adksetup.exe"
+    $webclient.DownloadFile($url,$file)
+    Write-Host "Downloaded to $file"
+    # From: http://technet.microsoft.com/en-us/library/hh825494.aspx#InstallingFromInternet
+    # TODO Download installer: http://download.microsoft.com/download/6/A/E/6AEA92B0-A412-4622-983E-5B305D2EBE56/adk/adksetup.exe
+    # Features found in `adksetup.exe /list`
+    adksetup /quiet /installpath "$programFiles\Windows Kits" /features OptionId.ApplicationCompatibilityToolkit
+}
 
 if (-not (test-administrator)) {
     write-error @"
 You must be running as administrator for this script to function.
-Unfortunately, we can't reasonable elevate privileges ourselves
+Unfortunately, we can't reasonably elevate privileges ourselves,
 so you need to launch an administrator mode command shell and then
 re-run this script yourself.  Sorry.
 "@
@@ -41,8 +81,14 @@ $mount  = join-path $cwd "razor-winpe-mount"
 # Default install root for the ADK; since the installer database
 # does not contain custom paths, if any, this was installed to,
 # we are stuck with just defaulting and failing.
-$adk = @([Environment]::GetFolderPath('ProgramFilesX86'),
-         [Environment]::GetFolderPath('ProgramFiles')) |
+
+if (-not (test-adk-installed)) {
+    install-adk
+}
+
+Write-Host $programFiles
+Write-Host $_
+$adk = $programFiles |
            % { join-path $_ 'Windows Kits\8.0\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64' } |
            ? { test-path  $_ } |
            select-object -First 1
