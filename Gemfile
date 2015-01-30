@@ -25,6 +25,8 @@ gem 'jdbc-postgres'
 gem 'archive'
 gem 'hashie', '~> 2.0.5'
 gem 'fast_gettext', '~> 0.8.1'
+gem 'rack-ssl'
+gem 'rack-ssl-enforcer'
 
 ## support for various tasks and utility
 # This allows us to encrypt plain-text-in-the-DB passwords when they travel,

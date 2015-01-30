@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 require 'sinatra'
+require 'rack/ssl-enforcer'
 
 require_relative './lib/razor/initialize'
 require_relative './lib/razor'
@@ -17,6 +18,9 @@ class Razor::App < Sinatra::Base
 
     use Razor::Middleware::Logger
     use Rack::CommonLogger, TorqueBox::Logger.new("razor.web.log")
+
+    # Forward insecure /api requests.
+    use Rack::SslEnforcer, :https_port => 8443, :http_port => 8080, :only => [%r{/api($|/)}i]
 
     # We add the authentication middleware all the time, so that our calls to,
     # eg, get the subject work.  The middleware is responsible for binding
