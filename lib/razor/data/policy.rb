@@ -97,7 +97,7 @@ module Razor::Data
       sql = <<SQL
 enabled is true
 and
-exists (select count(*) from policies_tags pt where pt.policy_id = policies.id)
+(select count(*) from policies_tags pt where pt.policy_id = policies.id) > 0
 and
 (select array(select pt.tag_id from policies_tags pt where pt.policy_id = policies.id)) <@ array[#{tag_ids}]::integer[]
 and
