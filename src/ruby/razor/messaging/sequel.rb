@@ -274,7 +274,7 @@ class Razor::Messaging::Sequel < TorqueBox::Messaging::MessageProcessor
 
   # A Sequel::Model plugin that integrates the `publish` method directly
   # into live instances of our classes.  This is a convenience method; see
-  # `lib/razor/initialize.rb` for details of it being used.
+  # `src/ruby/razor/initialize.rb` for details of it being used.
   module Plugin
     # This module is mixed in as instance methods on all Sequel::Model
     # classes that include our plugin.

@@ -1,33 +1,33 @@
 # -*- encoding: utf-8 -*-
 
-class Razor::Command::UpdateBrokerConfiguration < Razor::Command
-  summary "Update one key in a broker's configuration"
+class Razor::Command::UpdateHookConfiguration < Razor::Command
+  summary "Update one key in a hook's configuration"
   description <<-EOT
-This allows for updating, adding, and removing a single key of a broker's
+This allows for updating, adding, and removing a single key of a hook's
 configuration.
   EOT
 
   example api: <<-EOT
-Set a single key in a broker's configuration:
+Set a single key from a hook's configuration:
 
-    {"broker": "broker1", "key": "my_key", "value": "twelve"}
+    {"hook": "hook1", "key": "my_key", "value": "twelve"}
   EOT
 
   example cli: <<-EOT
-Set a single key in a broker's configuration:
+Set a single key from a hook's configuration:
 
-    razor update-broker-configuration --broker broker1 \\
+    razor update-hook-configuration --hook hook1 \\
         --key my_key --value twelve
 
 With positional arguments, this can be shortened:
 
-    razor update-broker-configuration broker1 my_key twelve
+    razor update-hook-configuration hook my_key twelve
   EOT
 
-  authz '%{broker}'
+  authz '%{hook}'
 
-  attr 'broker', type: String, required: true, references: [Razor::Data::Broker, :name],
-               position: 0, help: _('The broker for which to update configuration.')
+  attr 'hook', type: String, required: true, references: [Razor::Data::Hook, :name],
+               position: 0, help: _('The hook for which to update configuration.')
 
   attr 'key', required: true, type: String, size: 1..Float::INFINITY,
               position: 1, help: _('The key to change in the configuration.')
@@ -44,9 +44,9 @@ EOT
 
   # Update/add specific configuration key
   def run(request, data)
-    broker = Razor::Data::Broker[:name => data['broker']]
-    config = broker.configuration
-    attr_schema = broker.broker_type.configuration_schema[data['key']]
+    hook = Razor::Data::Hook[:name => data['hook']]
+    config = hook.configuration
+    attr_schema = hook.hook_type.configuration_schema[data['key']]
     result = if data['value']
                request.error 422, :error => _(
                    "configuration key #{data['key']} is not in the schema " +
@@ -56,7 +56,7 @@ EOT
                    {name: data['key']}
              elsif data['clear'] and config.has_key?(data['key'])
                config.delete(data['key'])
-               if attr_schema && attr_schema.has_key?('default')
+               if attr_schema and attr_schema.has_key?('default')
                  # The actual setting happens as part of the validation.
                  _("value for key %{name} reset to default") %
                      {name: data['key']}
@@ -68,9 +68,10 @@ EOT
                _("no changes; key %{name} already absent") %
                      {name: data['key']}
              end
-    broker.configuration = config
+    hook.configuration = config
     begin
-      broker.save
+      hook.validate
+      hook.save
       { :result => result }
     rescue Sequel::ValidationFailed => _
       request.error 422, :error => _("cannot clear required configuration key #{data['key']}")

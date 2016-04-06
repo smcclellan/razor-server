@@ -80,7 +80,7 @@ class Razor::BrokerType
     node.is_a?(Razor::Data::Node) or
       raise TypeError, _("internal error: %{class} where Razor::Data::Node expected") % {class: node.class}
     broker.is_a?(Razor::Data::Broker) or
-      raise TypeError, _("internal error: %{class} where Razor::Data::Broker expected") % {class: node.class}
+      raise TypeError, _("internal error: %{class} where Razor::Data::Broker expected") % {class: broker.class}
 
     # @todo danielp 2013-08-05: what else do we need to expose to the template
     # to make this all work?

@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 require_relative '../spec_helper'
-require_relative '../../app'
+require_relative '../../src/ruby/app'
 
 describe "command browser API" do
   include Rack::Test::Methods

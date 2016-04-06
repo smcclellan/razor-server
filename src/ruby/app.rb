@@ -2,13 +2,13 @@
 require 'sinatra'
 require 'gettext-setup'
 
-require_relative './lib/razor/initialize'
-require_relative './lib/razor'
+require_relative './razor/initialize'
+require_relative './razor'
 
 class Razor::App < Sinatra::Base
   extend Razor::Validation
 
-  GettextSetup.initialize(File.absolute_path('locales', File.dirname(__FILE__)))
+  GettextSetup.initialize(File.absolute_path('../../locales', File.dirname(__FILE__)))
 
   configure do
     # FIXME: This turns off template caching all together since I am not

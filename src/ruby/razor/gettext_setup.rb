@@ -3,7 +3,7 @@
 require 'fast_gettext'
 Object.send(:include, FastGettext::Translation)
 
-locales = File.absolute_path('../../locales', File.dirname(__FILE__))
+locales = File.absolute_path('../../../locales', File.dirname(__FILE__))
 
 # Define our text domain, and set the path into our root.  I would prefer to
 # have something smarter, but we really want this up earlier even than our

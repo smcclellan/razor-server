@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 require 'singleton'
 require 'yaml'
+require 'pathname'
 
 module Razor
   class InvalidConfigurationError < RuntimeError
@@ -44,7 +45,7 @@ module Razor
       # exists, otherwise the one in our root directory...
       fname ||= ENV["RAZOR_CONFIG"] ||
         (File.file?('/etc/puppetlabs/razor-server/config.yaml') and '/etc/puppetlabs/razor-server/config.yaml') ||
-        File::join(File::dirname(__FILE__), '..', '..', 'config.yaml')
+        File::join(File::dirname(__FILE__), '../../../config.yaml')
 
       # Save this for later, since we use it to find relative paths.
       @fname = fname

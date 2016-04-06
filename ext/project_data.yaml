@@ -19,7 +19,7 @@ description: |
   or to any other system capable of controlling the node (such as a vCenter
   server taking possession of ESX systems).
 # automatically burn our version into the generated source
-version_file: 'lib/razor/version.rb'
+version_file: 'src/ruby/razor/version.rb'
 update_version_file: true
 # files and gem_files are space separated lists (or arrays)
 files:
@@ -30,12 +30,11 @@ files:
   - 'Gemfile*'
   - .bundle
   - config.ru
-  - app.rb
   - bin
   - brokers
   - db
   - doc
-  - lib
+  - src
   - config.yaml.sample
   - hooks
   - shiro.ini
@@ -45,7 +44,6 @@ files:
   - build-winpe
   - Rakefile
   - tasks
-  - torquebox.rb
   - vendor
   - 'locales/*.po'
   - 'locales/*.pot'

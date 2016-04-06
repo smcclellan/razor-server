@@ -44,7 +44,7 @@ With positional arguments, this can be shortened::
 
         ["in", ["fact", "macaddress"], "de:ea:db:ee:f0:00", "de:ea:db:ee:f0:01"]
 
-    The syntax for rule expressions is defined in `lib/razor/matcher.rb`.
+    The syntax for rule expressions is defined in `src/ruby/razor/matcher.rb`.
     Expressions are of the form `[op arg1 arg2 .. argn]`
     where op is one of the operators below, and arg1 through argn are the
     arguments for the operator. If they are expressions themselves, they will

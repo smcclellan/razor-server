@@ -20,8 +20,8 @@ require_relative '../jars/slf4j-api-1.6.4.jar'
 
 ENV["RACK_ENV"] ||= "test"
 
-require_relative '../lib/razor/initialize'
-require_relative '../lib/razor'
+require_relative '../src/ruby/razor/initialize'
+require_relative '../src/ruby/razor'
 
 # Add some convenience functions to MockResponse
 class Rack::MockResponse
@@ -144,7 +144,7 @@ end
 # framework.  This provides enough messaging emulation that we can send
 # messages in tests and capture the fact they were sent without worrying
 # over-much.
-require_relative 'lib/razor/fake_queue'
+require_relative 'src/ruby/razor/fake_queue'
 RSpec.configure do |c|
   c.before(:each) do
     TorqueBox::Registry.merge!(

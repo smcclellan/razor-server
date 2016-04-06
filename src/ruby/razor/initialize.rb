@@ -8,8 +8,8 @@ require_relative 'config'
 require 'monitor'
 
 require 'java'
-require_relative '../../jars/shiro-core-1.2.3.jar'
-require_relative '../../jars/commons-beanutils-1.8.3.jar'
+require_relative '../../../jars/shiro-core-1.2.3.jar'
+require_relative '../../../jars/commons-beanutils-1.8.3.jar'
 
 # Load Sequel extensions
 Sequel.extension :core_extensions, :inflector
@@ -28,7 +28,7 @@ module Razor
 
     def root
       synchronize do
-        @@root ||= File::expand_path(File::join(File::dirname(__FILE__), "..", ".."))
+        @@root ||= File::expand_path(File::join(File::dirname(__FILE__), "../../.."))
       end
     end
 

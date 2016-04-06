@@ -7,3 +7,5 @@ log/*
 /.project
 /.ruby-version
 /ext/packaging/
+/gems
+/target

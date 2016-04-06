@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 require_relative '../spec_helper'
-require_relative '../../app'
+require_relative '../../src/ruby/app'
 
 # This should eventually be done by a command line tool resp. the server
 # when adding an task. For now, we use it to sanity check the

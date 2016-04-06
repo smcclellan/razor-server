@@ -9,11 +9,20 @@ namespace :bundler do
   task :setup do
     require 'bundler/setup'
   end
+
+  task :update_gems do
+  puts 'updating gems'
+    gem_dir = File.join(__FILE__, 'gems')
+    puts "Deleting #{gem_dir}..."
+    FileUtils.rm_rf Dir.glob("#{gem_dir}/*")
+    puts "Caching gems to #{gem_dir}..."
+    system("bundle install --gemfile Gemfile --standalone")
+  end
 end
 
 task :environment, [:env] => 'bundler:setup' do |cmd, args|
   ENV["RACK_ENV"] = args[:env] || "development"
-  require_relative "./lib/razor/initialize"
+  require_relative "src/ruby/razor/initialize"
 end
 
 namespace :db do
@@ -66,7 +75,7 @@ end
 
 desc "Open a preloaded irb session"
 task :console do
-  $: << File::expand_path(File::join(File::dirname(__FILE__), "lib"))
+  $: << File::expand_path(File::join(File::dirname(__FILE__), "src/ruby"))
 
   require 'irb'
   require 'razor/initialize'

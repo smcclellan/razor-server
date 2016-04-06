@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 require_relative '../spec_helper'
-require_relative '../../app'
+require_relative '../../src/ruby/app'
 
 describe Razor::Command::CreateTask do
   include Razor::Test::Commands
