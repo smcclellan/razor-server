@@ -36,7 +36,7 @@ module Razor::Data
 
     def remove_directory(dir)
       if Dir.exist?(dir)
-        FileUtils.chmod_R('+w', dir, force: true)
+        FileUtils.chmod_R(0777, dir, force: true)
         FileUtils.remove_entry_secure(dir)
       end
     end

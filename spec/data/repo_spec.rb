@@ -444,7 +444,7 @@ describe Razor::Data::Repo do
         Dir.exist?(unpacked_iso_dir).should be_false
       ensure
         # Cleanup
-        repo_dir and FileUtils.remove_entry_secure(repo_dir)
+        repo_dir and FileUtils.remove_entry_secure(repo_dir, force: true)
       end
     end
 
@@ -469,7 +469,7 @@ describe Razor::Data::Repo do
         File.read(file).should == 'precious text'
       ensure
         # Cleanup
-        repo_root and FileUtils.remove_entry_secure(repo_root)
+        repo_root and FileUtils.remove_entry_secure(repo_root, force: true)
       end
     end
 
@@ -578,7 +578,7 @@ describe Razor::Data::Repo do
         repo_dir.mkdir
         file = repo_dir + 'some-undeletable-file'
         file.open('w'){|f| f.print 'cant delete this' }
-        FileUtils.chmod('-w', file)
+        FileUtils.chmod(0000, file)
         repo.unpack_repo(command, tiny_iso)
       end
     end
